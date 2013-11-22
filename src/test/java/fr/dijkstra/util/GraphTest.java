@@ -4,6 +4,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GraphTest {
     private Vertex lille = new Vertex("Lille");
     private Vertex paris = new Vertex("Paris");
@@ -108,5 +111,17 @@ public class GraphTest {
         graph.getDistance("Lyon", "Marseille");
     }
 
+    @Test
+    public void getPathTest() throws EmptyGraphException, UnreachableVertexException, OutOfGraphException {
+        Graph graph = new Graph (lemans, nantes, bordeaux, toulouse, montpellier);
+        Assert.assertEquals(graph.getDistance("Le Mans", "Montpellier"), 931);
+        List<String> itinerary = new ArrayList<String>();
+        itinerary.add("Le Mans");
+        itinerary.add("Bordeaux");
+        itinerary.add("Toulouse");
+        itinerary.add("Montpellier");
+        Assert.assertEquals(itinerary, graph.getPath(montpellier));
+
+    }
 
 }

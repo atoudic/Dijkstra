@@ -120,7 +120,21 @@ public class Graph {
                 unvisited.add(target);
             }
         }
+    }
 
+    public List<String> getPath(Vertex target) {
+        List<String> path = new ArrayList<String>();
+        Vertex step = target;
+        if (predecessors.get(step) == null) {
+            return null;
+        }
+        path.add(step.getName());
+        while (predecessors.get(step) != null) {
+            step = predecessors.get(step);
+            path.add(step.getName());
+        }
+        Collections.reverse(path);
+        return path;
     }
 
 }
