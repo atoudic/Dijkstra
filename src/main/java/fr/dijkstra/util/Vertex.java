@@ -16,6 +16,10 @@ public class Vertex {
         return name;
     }
 
+    public List<Edge> getEdges() {
+        return edges;
+    }
+
     public void connectTo(Vertex target, int distance) {
         edges.add(new Edge(target, distance));
     }
