@@ -61,4 +61,18 @@ public class GraphTest {
 
         Assert.assertEquals(graph.getDistance("Paris", "Lyon"), 465);
     }
+
+    @Test
+    public void getDistanceForTwoVerticesWithOneIntermediary() {
+        Graph graph = new Graph(paris, lyon, marseille);
+
+        Assert.assertEquals(graph.getDistance("Paris", "Marseille"), 778);
+    }
+
+    @Test
+    public void getDistanceForThreeVerticesWithTwoIntermediaries() {
+        Graph graph = new Graph(paris, lyon, montpellier, toulouse);
+
+        Assert.assertEquals(graph.getDistance("Paris", "Toulouse"), 1014);
+    }
 }

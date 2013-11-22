@@ -1,33 +1,112 @@
 package fr.dijkstra.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Graph {
     private List<Vertex> vertices = new ArrayList<Vertex>();
+    private Set<Vertex> visited;
+    private Set<Vertex> unvisited;
+    private Map<Vertex, Vertex> predecessors;
+    private Map<Vertex, Integer> distance;
 
     public Graph(Vertex... vertices) {
         this.vertices.addAll(Arrays.asList(vertices));
+        visited = new HashSet<Vertex>();
+        unvisited = new HashSet<Vertex>();
+        distance = new HashMap<Vertex, Integer>();
+        predecessors = new HashMap<Vertex, Vertex>();
     }
 
     public int getDistance(String from, String to) {
-        int n = vertices.size(), i = 0;
-        while (i <= n && !(vertices.get(i).getName() == from)){
+
+        Vertex source = null;
+        Vertex target = null;
+
+        int n = vertices.size(), i = 0, count = 0;
+        while (i <n && count != 2){
+            String name = vertices.get(i).getName();
+            if (name == from){
+                source = vertices.get(i);
+                count++;
+            }
+            else if (name == to){
+                target = vertices.get(i);
+                count++;
+            }
             i++;
         }
-        if (!(i == n + 1)){
-            Vertex fr = vertices.get(i);
-            int m = fr.getEdges().size();
-            int j = 0;
-            while (j <= m && !(fr.getEdges().get(j).getTarget().getName() == to)){
-                j++;
-            }
-            if (!(j == m+1)){
-                return fr.getEdges().get(j).getDistance();
-            }
-            else return 0;
+
+        distance.put(source, 0);
+        unvisited.add(source);
+        while (unvisited.size() > 0) {
+            Vertex vertex = getMinimum(unvisited);
+            visited.add(vertex);
+            unvisited.remove(vertex);
+            findMinimalDistances(vertex);
         }
-        else return 0;
+
+        return distance.get(target);
     }
+
+    private Vertex getMinimum(Set<Vertex> unvisited) {
+        Vertex min = null;
+        for (Vertex vertex : unvisited) {
+            if (min == null) {
+                min = vertex;
+            } else {
+                if (algorithmDistance(vertex) < algorithmDistance(min)) {
+                    min = vertex;
+                }
+            }
+        }
+        return min;
+    }
+
+    private int algorithmDistance(Vertex vertex) {
+        Integer d = distance.get(vertex);
+        if (d == null) {
+            return Integer.MAX_VALUE;
+        } else {
+            return d;
+        }
+    }
+
+    private boolean isVisited(Vertex vertex) {
+        return visited.contains(vertex);
+    }
+
+    private List<Vertex> getNeighbors(Vertex vertex) {
+        List<Vertex> neighbors = new ArrayList<Vertex>();
+        for (Edge edge : vertex.getEdges()) {
+            Vertex target = edge.getTarget();
+            if (vertices.contains(target) && !isVisited(target)){
+                neighbors.add(target);
+            }
+        }
+        return neighbors;
+    }
+
+    private int neighborsDistance(Vertex source, Vertex target){
+        List<Edge> edges = source.getEdges();
+        int n = edges.size(), i = 0;
+        while (i < n && edges.get(i).getTarget() != target)
+            i++;
+        return edges.get(i).getDistance();
+    }
+
+    private void findMinimalDistances(Vertex vertex) {
+        List<Vertex> neighbors = getNeighbors(vertex);
+        for (Vertex target : neighbors) {
+            if (algorithmDistance(target) >
+                    algorithmDistance(vertex) + neighborsDistance(vertex, target)){
+
+                distance.put(target,
+                        algorithmDistance(vertex) + neighborsDistance(vertex, target));
+                predecessors.put(target, vertex);
+                unvisited.add(target);
+            }
+        }
+
+    }
+
 }
