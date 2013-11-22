@@ -17,12 +17,17 @@ public class Graph {
         predecessors = new HashMap<Vertex, Vertex>();
     }
 
-    public int getDistance(String from, String to) {
-
+    public int getDistance(String from, String to)
+            throws EmptyGraphException, UnreachableVertexException, OutOfGraphException {
+        int n = vertices.size();
+        if (n == 0){
+            throw new EmptyGraphException();
+        }
+        else{
         Vertex source = null;
         Vertex target = null;
 
-        int n = vertices.size(), i = 0, count = 0;
+        int i = 0, count = 0;
         while (i <n && count != 2){
             String name = vertices.get(i).getName();
             if (name == from){
@@ -36,6 +41,9 @@ public class Graph {
             i++;
         }
 
+        if (count != 2)
+            throw new OutOfGraphException();
+        else{
         distance.put(source, 0);
         unvisited.add(source);
         while (unvisited.size() > 0) {
@@ -45,7 +53,13 @@ public class Graph {
             findMinimalDistances(vertex);
         }
 
-        return distance.get(target);
+        int d = algorithmDistance(target);
+        if (d == Integer.MAX_VALUE)
+            throw new UnreachableVertexException();
+        else return d;
+        }
+        }
+
     }
 
     private Vertex getMinimum(Set<Vertex> unvisited) {

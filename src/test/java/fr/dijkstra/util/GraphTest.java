@@ -56,23 +56,57 @@ public class GraphTest {
     }
 
     @Test
-    public void getDistanceForTwoAdjacentVertices() {
+    public void getDistanceForTwoAdjacentVertices() throws EmptyGraphException, UnreachableVertexException, OutOfGraphException {
         Graph graph = new Graph(paris, lyon);
 
         Assert.assertEquals(graph.getDistance("Paris", "Lyon"), 465);
     }
 
     @Test
-    public void getDistanceForTwoVerticesWithOneIntermediary() {
+    public void getDistanceForTwoVerticesWithOneIntermediary() throws EmptyGraphException, UnreachableVertexException, OutOfGraphException {
         Graph graph = new Graph(paris, lyon, marseille);
 
         Assert.assertEquals(graph.getDistance("Paris", "Marseille"), 778);
     }
 
     @Test
-    public void getDistanceForThreeVerticesWithTwoIntermediaries() {
+    public void getDistanceForThreeVerticesWithTwoIntermediaries() throws EmptyGraphException, UnreachableVertexException, OutOfGraphException {
         Graph graph = new Graph(paris, lyon, montpellier, toulouse);
 
         Assert.assertEquals(graph.getDistance("Paris", "Toulouse"), 1014);
     }
+
+    @Test
+    public void getDistanceWithMultipleChoices() throws EmptyGraphException, UnreachableVertexException, OutOfGraphException {
+        Graph graph = new Graph(lille, reims, paris);
+
+        Assert.assertEquals(graph.getDistance("Lille", "Paris"), 222);
+    }
+
+    @Test
+    public void getDistanceAvoidingCycles() throws EmptyGraphException, UnreachableVertexException, OutOfGraphException {
+        Graph graph = new Graph(lemans, nantes, bordeaux, toulouse, montpellier);
+
+        Assert.assertEquals(graph.getDistance("Le Mans", "Montpellier"), 931);
+    }
+
+    @Test(expected=EmptyGraphException.class)
+     public void emptyGraph() throws EmptyGraphException, UnreachableVertexException, OutOfGraphException {
+        Graph graph = new Graph();
+        graph.getDistance("Paris", "Marseille");
+    }
+
+    @Test(expected=UnreachableVertexException.class)
+    public void noPath() throws EmptyGraphException, UnreachableVertexException, OutOfGraphException {
+        Graph graph = new Graph(lemans, paris, lyon);
+        graph.getDistance("Lyon", "Le Mans");
+    }
+
+    @Test(expected=OutOfGraphException.class)
+    public void outOfGraph() throws EmptyGraphException, UnreachableVertexException, OutOfGraphException {
+        Graph graph = new Graph(lemans, paris, lyon);
+        graph.getDistance("Lyon", "Marseille");
+    }
+
+
 }
